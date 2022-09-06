@@ -49,6 +49,8 @@ class ImportBeanDefinitionRegistrarTests {
 	void shouldInvokeAwareMethodsInImportBeanDefinitionRegistrar() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
 		context.getBean(MessageSource.class);
+		A bean = context.getBean(A.class);
+		bean.say();
 
 		assertThat(SampleRegistrar.beanFactory).isEqualTo(context.getBeanFactory());
 		assertThat(SampleRegistrar.classLoader).isEqualTo(context.getBeanFactory().getBeanClassLoader());
@@ -61,6 +63,17 @@ class ImportBeanDefinitionRegistrarTests {
 	@Sample
 	@Configuration
 	static class Config {
+
+		@Bean
+		public A getA() {
+			return new A();
+		}
+	}
+
+	static class A {
+		public void say(){
+			System.out.println("say...");
+		}
 	}
 
 
