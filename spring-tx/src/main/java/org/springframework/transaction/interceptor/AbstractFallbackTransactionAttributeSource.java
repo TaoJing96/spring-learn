@@ -111,7 +111,7 @@ public abstract class AbstractFallbackTransactionAttributeSource
 		TransactionAttribute cached = this.attributeCache.get(cacheKey);
 		if (cached != null) {
 			// Value will either be canonical value indicating there is no transaction attribute,
-			// or an actual transaction attribute.
+			//M or an actual transaction attribute.
 			if (cached == NULL_TRANSACTION_ATTRIBUTE) {
 				return null;
 			}

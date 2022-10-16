@@ -597,7 +597,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
 
 			/**容器刷新前的准备
-			 * 1. 获取environment对象 并加载当前系统属性
+			 * 1. 记录容器开始时间
+			 * 2. 获取environment对象 并加载当前系统属性
+			 * 3. 初始化监听器、事件集合
 			 * */
 			// Prepare this context for refreshing.
 			prepareRefresh();
@@ -607,7 +609,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// bean factory准备工作
+			// bean factory准备工作  设置一些属性
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -621,7 +623,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory);
+				registerBeanPostProcessors(beanFactory);//注册BPP，例如AutowiredAnnotationBeanPostProcessor，就是根据bd来调用getBean()实例化BPP
 				beanPostProcess.end();
 
 				// Initialize message source for this context.
@@ -684,14 +686,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		// 占位符 留给子类实现
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		//1. 创建Environment
+		//2. 校验环境变量 例如加了下面代码就会校验环境变量是否有aws-secret
+		//getEnvironment().setRequiredProperties("aws-secret");
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
 		if (this.earlyApplicationListeners == null) {
+			//存储应用监听器
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		} else {
 			// Reset local application listeners to pre-refresh state.
@@ -701,6 +708,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
+		//初始化事件set
 		this.earlyApplicationEvents = new LinkedHashSet<>();
 	}
 

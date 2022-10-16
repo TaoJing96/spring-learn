@@ -65,9 +65,11 @@ import org.springframework.lang.Nullable;
 public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
 
 	@Nullable
+	//允许bd被覆盖
 	private Boolean allowBeanDefinitionOverriding;
 
 	@Nullable
+	//允许循环依赖
 	private Boolean allowCircularReferences;
 
 	/** Bean factory for this context. */
@@ -119,13 +121,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		//bean工厂存在就销毁
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
+			//创建DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			//设置序列化id，可以从这个id反序列化到beanFactory
 			beanFactory.setSerializationId(getId());
+			//允许设置 allowBeanDefinitionOverriding allowCircularReferences
 			customizeBeanFactory(beanFactory);
 			loadBeanDefinitions(beanFactory);
 			this.beanFactory = beanFactory;

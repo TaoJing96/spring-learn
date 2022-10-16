@@ -95,6 +95,7 @@ configure(allprojects) { project ->
 			dependency "org.yaml:snakeyaml:1.30"
 
 			dependency "com.h2database:h2:2.1.214"
+			dependency "mysql:mysql-connector-java:8.0.29"
 			dependency "com.github.ben-manes.caffeine:caffeine:2.9.3"
 			dependency "com.github.librepdf:openpdf:1.3.29"
 			dependency "com.rometools:rome:1.18.0"
